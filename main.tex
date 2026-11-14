@@ -244,7 +244,7 @@ Here, $t$ is the dwell-time vector, $T$ the HR-CTV, $\mathcal{O}$ the set of eva
 
 For each fraction, $D_{T}^{\text{LB}}$ and $D_{r}^{\text{UB}}$ were set to the corresponding dose-volume metrics of the original, unrescaled clinical plan. These bounds remained fixed throughout optimization and feasibility assessment. Normalization to HR-CTV D\textsubscript{90} = 600 cGy was used only for eligibility assessment and plan comparisons.
 
-The common dose term $F_{\text{dose}}\left( t \right)$ is augmented by the group-sparsity penalty $F_{\text{sparse}}\left( t \right)$ during Group-Sparsity and by the dwell-time smoothness penalty $F_{\text{smooth}}\left( t \right)$ during spatial configuration optimization at a fixed catheter count. Dwell-time reoptimization during coverage checks and Pruning uses $F_{\text{dose}}\left( t \right)$ alone.
+The common dose term $F_{\text{dose}}\left( t \right)$ is augmented by the group-sparsity penalty $F_{\text{sparse}}\left( t \right)$ during Group-Sparsity (Section~\ref{sec:2-2-2}) and by the dwell-time smoothness penalty $F_{\text{smooth}}\left( t \right)$ during spatial configuration optimization at a fixed catheter count (Section~\ref{sec:2-2-3}). Dwell-time reoptimization during coverage checks and Pruning uses $F_{\text{dose}}\left( t \right)$ alone.
 
 \subsubsection{Candidate Trajectory Generation and Initial Pool Construction}\label{sec:2-2-1}
 
