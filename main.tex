@@ -273,7 +273,7 @@ S_{c} = \sum_{i}^{}(w_{i}^{\text{cold}} - w_{i}^{\text{risk}})q_{\text{ci}},
 
 where $w_{i}^{\text{cold}}$ and $w_{i}^{\text{risk}}$ denote the target-coverage priority and OAR-risk weights at sampling point $i$, respectively, and $q_{\text{ci}} \in \left\lbrack 0,1 \right\rbrack$ is the normalized proxy dose contribution from candidate catheter $c$ at that point. The proxy dose was calculated using dwell positions spaced 5 mm apart along the candidate catheter between its HR-CTV entry and exit points. The same 5-mm dwell-position spacing was used in all subsequent optimization steps.
 
-At each iteration, the highest-scoring candidate with $S_{c} > 0$ was selected among those satisfying a minimum 2-mm separation from all previously selected catheters. The spacing constraint was imposed to prevent overlap between guide channels, with separation measured as the minimum three-dimensional Euclidean distance between the finite catheter centerline segments. Following each selection, the target-coverage priority weights were reduced according to the normalized proxy dose contribution from the newly selected catheter, and the OAR-risk weights were updated based on the cumulative proxy dose from the selected core catheters. Candidate scores were then recalculated to account for the updated target-coverage priorities and OAR-risk penalties. Core selection terminated when the sum of the target-coverage priority weights fell below 10\textsuperscript{-4} of its initial value, the 100-catheter pool limit was reached, or no geometrically eligible candidate with a positive score remained. The proxy dose calculation, weight initialization, and weight updates are detailed in Appendix A.1.
+At each iteration, the highest-scoring candidate with $S_{c} > 0$ was selected among those satisfying a minimum 2-mm separation from all previously selected catheters. The spacing constraint was imposed to prevent overlap between guide channels, with separation measured as the minimum three-dimensional Euclidean distance between the finite catheter centerline segments. Following each selection, the target-coverage priority weights were reduced according to the normalized proxy dose contribution from the newly selected catheter, and the OAR-risk weights were updated based on the cumulative proxy dose from the selected core catheters. Candidate scores were then recalculated to account for the updated target-coverage priorities and OAR-risk penalties. Core selection terminated when the sum of the target-coverage priority weights fell below 10\textsuperscript{-4} of its initial value, the 100-catheter pool limit was reached, or no geometrically eligible candidate with a positive score remained. The proxy dose calculation, weight initialization, and weight updates are detailed in Appendix~\ref{sec:app-1}.
 
 Following core selection, additional candidate catheters with valid dwell positions were drawn in random order from the remaining feasible trajectories, subject to the same minimum 2-mm three-dimensional inter-catheter separation constraint. Random supplementation continued until the initial catheter pool contained 100 catheters or no eligible candidates remained.
 
@@ -312,7 +312,7 @@ To safeguard HR-CTV coverage, we incorporated a feasibility check into the Group
 
 Successful checks saved the active set and FISTA dwell times as the latest feasible anchor; L-BFGS-B dwell times were used only for assessment. Failure of the first coverage check terminated the workflow without proceeding to Pruning or spatial configuration optimization. A subsequent failure restored the latest feasible anchor and ended FISTA. In addition to a failed feasibility check, FISTA stopped when the active catheter set remained unchanged across three consecutive block-end evaluations (the active-set stability criterion) or when reaching the maximum limit of 20,000 iterations.
 
-Following the Group-Sparsity stage, sequential pruning was performed to explore further catheter reduction, as shown in Figure~\ref{fig:3}(B). Catheters were ranked once in ascending order of total dwell time in the final FISTA solution. The cumulative dwell time of removed catheters was capped at 5\% of that solution's total dwell time, with the ranking and cap fixed throughout Pruning. The same L-BFGS-B procedure was used to minimize $F_{\text{dose}}\left( t \right)$ for the complete active set before Pruning and after each tentative removal. Removal was accepted only if the reoptimized value of $F_{\text{dose}}\left( t \right)$ was finite and the reoptimized HR-CTV D\textsubscript{90} was at least 95\% of $D_{T}^{\text{LB}}$; otherwise, the last accepted solution was restored and Pruning stopped. This empirically selected D\textsubscript{90} tolerance allowed further catheter reduction while limiting the allowable decrease in reoptimized HR-CTV D\textsubscript{90} relative to the original, unrescaled clinical plan. Pruning also stopped if removing the next catheter would exceed the 5\% cumulative dwell-time limit or if only one catheter remained. The control flow for Group-Sparsity and Pruning is summarized in Algorithm A1 in Appendix A.2.
+Following the Group-Sparsity stage, sequential pruning was performed to explore further catheter reduction, as shown in Figure~\ref{fig:3}(B). Catheters were ranked once in ascending order of total dwell time in the final FISTA solution. The cumulative dwell time of removed catheters was capped at 5\% of that solution's total dwell time, with the ranking and cap fixed throughout Pruning. The same L-BFGS-B procedure was used to minimize $F_{\text{dose}}\left( t \right)$ for the complete active set before Pruning and after each tentative removal. Removal was accepted only if the reoptimized value of $F_{\text{dose}}\left( t \right)$ was finite and the reoptimized HR-CTV D\textsubscript{90} was at least 95\% of $D_{T}^{\text{LB}}$; otherwise, the last accepted solution was restored and Pruning stopped. This empirically selected D\textsubscript{90} tolerance allowed further catheter reduction while limiting the allowable decrease in reoptimized HR-CTV D\textsubscript{90} relative to the original, unrescaled clinical plan. Pruning also stopped if removing the next catheter would exceed the 5\% cumulative dwell-time limit or if only one catheter remained. The control flow for Group-Sparsity and Pruning is summarized in Algorithm~\ref{alg:A1} in Appendix~\ref{sec:app-2}.
 
 \subsubsection{Catheter Spatial Configuration Optimization}\label{sec:2-2-3}
 
@@ -663,6 +663,91 @@ This study has several limitations. It was a single-center retrospective computa
 This study presents an integrated automated planning approach that combines catheter generation and initial-pool construction with adaptive catheter number determination and subsequent fixed-count spatial configuration and dwell-time optimization for individualized template-guided HDR-ISBT. In retrospective computational replanning, the framework reduced the median catheter number from six to four. After normalization to the same HR-CTV D\textsubscript{90}, the automated plans showed a small but statistically significant reduction in HR-CTV D\textsubscript{95}, no significant differences in V\textsubscript{150} or V\textsubscript{200}, and lower colon D\textsubscript{2cc} and urethral D\textsubscript{0.1cc} than the clinical plans. Stage-wise analysis showed that Pruning enabled further catheter reduction but adversely affected several dosimetric metrics; subsequent Catheter Exchange mitigated several of these changes at the retained catheter count. The framework therefore provides an automated approach for balancing catheter use and dosimetric performance, although prospective pre-implantation planning and physical validation of template fabrication and catheter insertion are required before clinical implementation.
 
 \end{samepage}
+
+\appendix
+\section*{Appendix}\label{sec:appendix}
+
+\renewcommand{\thesubsection}{A.\arabic{subsection}}
+\setcounter{subsection}{0}
+\renewcommand{\theequation}{A\arabic{equation}}
+\setcounter{equation}{0}
+\renewcommand{\thealgorithm}{A\arabic{algorithm}}
+\setcounter{algorithm}{0}
+
+\subsection{Proxy Dose Calculation and Iterative Reweighting}\label{sec:app-1}
+
+For the score in Equation~\eqref{eq:3}, the unnormalized proxy dose contribution ${\widetilde{d}}_{\text{ci}}$ was calculated by summing the dose contributions at sampling point $i$ from dwell positions spaced 5 mm apart along candidate catheter $c$ between its HR-CTV entry and exit points, assuming a nominal dwell time of 1 s at each position. The normalized proxy dose contribution was defined as $q_{\text{ci}} = \min\left( \frac{{\widetilde{d}}_{\text{ci}}}{P_{95}},1 \right)$, where $P_{95}$ is the 95th percentile of positive ${\widetilde{d}}_{\text{ci}}$ values across all candidate catheter--sampling-point pairs.
+
+The weights were initialized as $w_{i,\text{initial}}^{\text{cold}} = v_{i}^{T}$ and $w_{i,\text{initial}}^{\text{risk}} = 0.2b_{i}^{O}$, where $b_{i}^{O} = \sum_{r}^{}v_{\text{ri}}^{O}\frac{D_{T}^{\text{LB}}}{D_{r}^{\text{UB}}}$ is the baseline OAR-risk factor at sampling point $i$. The volume fractions $v_{i}^{T}$ and $v_{\text{ri}}^{O}$ and the clinical reference bounds $D_{T}^{\text{LB}}$ and $D_{r}^{\text{UB}}$ are defined in Section~\ref{sec:2-2}.
+
+After each core catheter $c$ was selected, the weights were updated as follows:
+
+\begin{equation}\label{eq:A1}
+w_{i}^{\text{cold}} \leftarrow w_{i}^{\text{cold}}\max\left( 0,\ 1 - q_{\text{ci}} \right),
+\end{equation}
+
+\begin{equation}\label{eq:A2}
+w_{i}^{\text{risk}} = b_{i}^{O}\left\lbrack 0.2 + \left( \frac{d_{i}^{\text{acc}}}{D_{T}^{\text{LB}}} \right)^{2} \right\rbrack,
+\end{equation}
+
+where $d_{i}^{\text{acc}}$ denotes the sum of the unnormalized proxy dose contributions at sampling point $i$ from the core catheters selected up to the current iteration. Candidate scores were then recalculated using the updated weights.
+
+\subsection{FISTA Implementation and Control Flow}\label{sec:app-2}
+
+All dwell times in the initial catheter pool were initialized to 1 s so that all catheters were initially active. FISTA used groupwise proximal updates with backtracking. The first block ran for 500 iterations before $K$ was updated. Each subsequent block began with 50 stabilization iterations without convergence assessment. After this period, 10 consecutive iterations ending in line-search failure triggered an early $K$ update and initiated the next block.
+
+\begin{algorithmblock}
+\setlength{\parskip}{0pt}
+\caption{Adaptive catheter number determination using Group-Sparsity and Pruning.}\label{alg:A1}
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1}
+\begin{tabularx}{\linewidth}{@{}>{\raggedleft\arraybackslash}p{12pt}>{\raggedright\arraybackslash}p{0.59\linewidth}>{\raggedright\arraybackslash}X@{}}
+\specialrule{0.5pt}{1.5pt}{1.5pt}
+\multicolumn{3}{@{}p{\linewidth}@{}}{\textbf{Input:} Initial catheter pool $\mathcal{C}_{0}$, dose data, and clinical dose bounds\newline \textbf{Output:} Retained catheter set $\mathcal{C}$ and dwell times $t$, or FAILURE} \\
+\specialrule{1.5pt}{1.5pt}{1.5pt}
+1 & \textbf{1. Group-Sparsity} &  \\
+2 & \hspace*{6.475pt}$t\  \leftarrow \ 1\text{ s};\ K\  \leftarrow \ 20;\ \text{Anchor}\  \leftarrow \ \varnothing$ & \# Initialize optimization \\
+3 & \hspace*{6.475pt}Set sparsity weights using Equation~\eqref{eq:5} & \# Assign catheter penalties \\
+4 & \hspace*{6.475pt}\textbf{For} $k\  = \ 1,\ \ldots,\ 20,000$: & \# Limit FISTA iterations \\
+5 & \hspace*{15.125pt}$t\  \leftarrow \ \text{FISTAUpdate}\left( t,\ K \right)$ & \# Minimize $F_{\text{dose}}\left( t \right)\  + \ F_{\text{sparse}}\left( t \right)$ \\
+6 & \hspace*{15.125pt}$\mathcal{C}\  \leftarrow \ \text{ActiveCatheters}\left( t \right)$ & \# Identify retained catheters \\
+7 & \hspace*{15.125pt}\textbf{If} $\text{CoverageCheckDue}\left( k,\ \mathcal{C},\ \text{Anchor} \right)$: & \# First check or count reduction \\
+8 & \hspace*{23.75pt}$t^{\text{check}}\  \leftarrow \ \text{DoseReopt}\left( \mathcal{C},\ t \right)$ & \# Assess dose-only feasibility \\
+9 & \hspace*{23.75pt}\textbf{If} $D_{90}\left( t^{\text{check}} \right)\  \geq \ 0.95D_{T}^{\text{LB}}$: & \# Check target coverage \\
+10 & \hspace*{32.4pt}$\text{Anchor}\  \leftarrow \ \left( \mathcal{C},\ t \right)$ & \# Save the FISTA solution \\
+11 & \hspace*{23.75pt}\textbf{Else if} $\text{Anchor}\  = \ \varnothing$: & \# No feasible anchor available \\
+12 & \hspace*{32.4pt}\textbf{Return} FAILURE & \# Terminate the workflow \\
+13 & \hspace*{23.75pt}\textbf{Else:} & \# Restore previous feasibility \\
+14 & \hspace*{32.4pt}$\left( \mathcal{C},\ t \right)\  \leftarrow \ \text{Restore}\left( \text{Anchor} \right)$ & \# Recover the latest anchor \\
+15 & \hspace*{32.4pt}\textbf{Break} & \# Stop FISTA \\
+16 & \hspace*{15.125pt}\textbf{If} \text{KStageEnds}: & \# Scheduled or early K update \\
+17 & \hspace*{23.75pt}\textbf{If} \text{KStageStable}: & \# Three eligible stable comparisons \\
+18 & \hspace*{32.4pt}\textbf{Break} & \# Stop catheter selection \\
+19 & \hspace*{23.75pt}Update $K$ using Equation~\eqref{eq:6} & \# Adjust sparsity strength \\
+20 & \hspace*{23.75pt}Update weights using Equation~\eqref{eq:5} & \# Refresh catheter penalties \\
+\cmidrule[0.5pt]{2-3}
+21 & \textbf{2. Pruning} &  \\
+22 & \hspace*{6.475pt}$\tau_{c}\  \leftarrow \ \text{CatheterDwellTotals}\left( \mathcal{C},\ t \right)$ & \# Use the final FISTA solution \\
+23 & \hspace*{6.475pt}$\text{Order}\  \leftarrow \ \text{SortAscending}\left( \mathcal{C},\ \tau_{c} \right)$ & \# Fix the removal order \\
+24 & \hspace*{6.475pt}$\text{Budget}\  \leftarrow \ 0.05\sum_{c}^{}\tau_{c};\ \text{Removed}\  \leftarrow \ 0$ & \# Fix the deletion budget \\
+25 & \hspace*{6.475pt}$t\  \leftarrow \ \text{DoseReopt}\left( \mathcal{C},\ t \right)$ & \# Establish the initial solution \\
+26 & \hspace*{6.475pt}\textbf{For} $c$ in \text{Order}: & \# Test sequential removal \\
+27 & \hspace*{15.125pt}\textbf{If} $\left| \mathcal{C} \right|\  \leq \ 1$ or $\text{Removed}\  +\ \tau_{c}\  >\ \text{Budget}$: & \# Check removal limits \\
+28 & \hspace*{23.75pt}\textbf{Break} & \# Stop Pruning \\
+29 & \hspace*{15.125pt}$\mathcal{C}^{\text{trial}}\  \leftarrow \ \mathcal{C}\  \smallsetminus \ \left\{ c \right\}$ & \# Tentatively remove one catheter \\
+30 & \hspace*{15.125pt}$t^{\text{trial}}\  \leftarrow \ \text{DoseReopt}\left( \mathcal{C}^{\text{trial}},\ t \right)$ & \# Reoptimize remaining dwell times \\
+31 & \hspace*{15.125pt}\textbf{If} $F_{\text{dose}}\left( t^{\text{trial}} \right)$ is finite & \# Require a valid dose objective \\
+32 & \hspace*{19.45pt}\textbf{and} $D_{90}\left( t^{\text{trial}} \right)\  \geq \ 0.95D_{T}^{\text{LB}}$: & \# Require sufficient coverage \\
+33 & \hspace*{23.75pt}$\left( \mathcal{C},\ t \right)\  \leftarrow \ \left( \mathcal{C}^{\text{trial}},\ t^{\text{trial}} \right)$ & \# Accept the removal \\
+34 & \hspace*{23.75pt}$\text{Removed}\  \leftarrow \ \text{Removed}\  +\ \tau_{c}$ & \# Accumulate removed dwell time \\
+35 & \hspace*{15.125pt}\textbf{Else:} & \# Reject the trial configuration \\
+36 & \hspace*{23.75pt}\textbf{Break} & \# Retain the last accepted solution \\
+37 & \hspace*{6.475pt}\textbf{Return} $\left( \mathcal{C,\ }t \right)$ & \# Pass to configuration optimization \\
+\specialrule{1.5pt}{1.5pt}{1.5pt}
+\end{tabularx}
+\par\vspace{3pt}
+\noindent Note: $\mathcal{C}$ denotes the catheter set, and $\left| \mathcal{C} \right|$ its catheter count. $D_{T}^{\text{LB}}$ is the HR-CTV D\textsubscript{90} of the corresponding original, unrescaled clinical plan. DoseReopt minimizes $F_{\text{dose}}\left( t \right)$ using L-BFGS-B with nonnegative bounds and at most 50 iterations. CoverageCheckDue triggers at iteration 551 and subsequently when catheter count falls below that of the latest feasible anchor. KStageEnds and KStageStable follow the update and stability rules in Section~\ref{sec:2-2-2} and Appendix~\ref{sec:app-2}. For Pruning, $\tau_{c}$ denotes the total dwell time of catheter $c$ in the final FISTA solution; these values, the ascending removal order, and the 5\% deletion budget remain fixed throughout Pruning. Anchor stores the latest feasible catheter set and FISTA dwell times. The superscripts ``check'' and ``trial'' identify coverage-assessment and tentative-removal variables, respectively.\par
+\end{algorithmblock}
 
 \section*{Acknowledgments}
 
