@@ -277,7 +277,7 @@ where $w_{i}^{\text{cold}}$ and $w_{i}^{\text{risk}}$ denote the target-coverage
 
 At each iteration, the highest-scoring candidate with $S_{c} > 0$ was selected among those satisfying a minimum 2-mm separation from all previously selected catheters. The spacing constraint was imposed to prevent overlap between guide channels, with separation measured as the minimum three-dimensional Euclidean distance between the finite catheter centerline segments. Following each selection, the target-coverage priority weights were reduced according to the normalized proxy dose contribution from the newly selected catheter, and the OAR-risk weights were updated based on the cumulative proxy dose from the selected core catheters. Candidate scores were then recalculated to account for the updated target-coverage priorities and OAR-risk penalties. Core selection terminated when the sum of the target-coverage priority weights fell below 10\textsuperscript{-4} of its initial value, the 100-catheter pool limit was reached, or no geometrically eligible candidate with a positive score remained. The proxy dose calculation, weight initialization, and weight updates are detailed in Appendix~\ref{sec:app-1}.
 
-Following core selection, additional candidate catheters with valid dwell positions were drawn in random order from the remaining feasible trajectories, subject to the same minimum 2-mm three-dimensional inter-catheter separation constraint. Random supplementation continued until the initial catheter pool contained 100 catheters or no eligible candidates remained.
+Following core selection, additional candidate catheters with valid dwell positions were drawn in random order from the remaining feasible trajectories, subject to the same minimum 2-mm three-dimensional inter-catheter separation constraint. Random supplementation continued until the initial catheter pool contained 100 catheters or no eligible candidates remained. Due to the spatial confinement within the template and target volume, the 2-mm inter-catheter separation constraint leads to geometric saturation of non-colliding straight trajectories, typically resulting in an initial pool size smaller than the nominal upper limit of 100.
 
 \subsubsection{Adaptive Catheter Number Determination}\label{sec:2-2-2}
 
@@ -675,6 +675,9 @@ This study presents an integrated automated planning approach that combines cath
 \setcounter{equation}{0}
 \renewcommand{\thealgorithm}{A\arabic{algorithm}}
 \setcounter{algorithm}{0}
+\renewcommand{\theHequation}{A\arabic{equation}}
+\renewcommand{\theHalgorithm}{A\arabic{algorithm}}
+\renewcommand{\theHsubsection}{A.\arabic{subsection}}
 
 \subsection{Proxy Dose Calculation and Iterative Reweighting}\label{sec:app-1}
 
